@@ -21,9 +21,20 @@ Exemplo de uso:
         def cmd_ola(self, username, args, **kwargs):
             return f"Olá, {username}!"
 
+Para integração com mods de jogos:
+
+    from chaos_sdk.mods import ModBridgePlugin, mod_event
+
+    class MeuJogoPlugin(ModBridgePlugin):
+        game_id = "meu_jogo"
+        
+        @mod_event("player_died")
+        def on_player_died(self, mod, event):
+            return f"{event.player} morreu!"
+
 Documentação: https://chaos.mroz.dev.br/docs/sdk
 """
-__version__ = "1.2.0"
+__version__ = "1.3.0"
 
 # Core - Classes base
 from chaos_sdk.core.plugin import (
@@ -87,10 +98,26 @@ from chaos_sdk.config import (
 from chaos_sdk.blueprints import (
     compile_blueprint,
     compile_blueprint_v2,
+    compile_blueprint_secure,
     validate_blueprint,
     CompilationResult,
     CompilerMessage,
     Severity,
+)
+
+# Mod Integration System
+from chaos_sdk.mods import (
+    ModBridgePlugin,
+    ModConnection,
+    ModMessage,
+    ModEvent,
+    ModCommand,
+    ModResponse,
+    mod_event,
+    mod_command,
+    on_mod_connect,
+    on_mod_disconnect,
+    ModRegistry,
 )
 
 __all__ = [
@@ -162,8 +189,22 @@ __all__ = [
     # Blueprints
     "compile_blueprint",
     "compile_blueprint_v2",
+    "compile_blueprint_secure",
     "validate_blueprint",
     "CompilationResult",
     "CompilerMessage",
     "Severity",
+    
+    # Mod Integration
+    "ModBridgePlugin",
+    "ModConnection",
+    "ModMessage",
+    "ModEvent",
+    "ModCommand",
+    "ModResponse",
+    "mod_event",
+    "mod_command",
+    "on_mod_connect",
+    "on_mod_disconnect",
+    "ModRegistry",
 ]
