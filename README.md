@@ -64,21 +64,30 @@ python -m chaos_sdk.blueprints.api
 ### Compilar Blueprint para Python
 
 ```python
-from chaos_sdk.blueprints import compile_blueprint_v2
+from chaos_sdk.blueprints import compile_blueprint_secure
 
 # Carregar blueprint JSON
 with open("meu_plugin.json") as f:
     blueprint = json.load(f)
 
-# Compilar
-result = compile_blueprint_v2(blueprint)
+# Compilar com validação de segurança
+result = compile_blueprint_secure(blueprint)
 
 if result.success:
+    print(f"✅ Compilado! Hash: {result.security_hash}")
     print(result.code)  # Código Python gerado
+    
+    # Salvar plugin
+    with open("meu_plugin.py", "w") as f:
+        f.write(result.code)
 else:
+    print("❌ Falha na compilação:")
     for msg in result.messages:
-        print(f"{msg.severity}: {msg.message}")
+        print(f"  [{msg.severity.value}] {msg.message}")
 ```
+
+> ⚠️ **Sempre use `compile_blueprint_secure`** em produção!
+> Ele valida inputs e previne code injection.
 
 ## 🚀 Quick Start - Código Python
 
@@ -130,18 +139,21 @@ python -m chaos_sdk.cli publish meu_plugin.py
 
 ## 📁 Estrutura
 
-```
+```text
 chaos-sdk/
 ├── chaos_sdk/           # SDK principal
 │   ├── core/           # Classes base (Plugin, Command, etc)
-│   ├── blueprints/     # Compilador de blueprints
+│   ├── blueprints/     # Compiladores de blueprints
+│   │   ├── compiler.py     # v1 - Legacy
+│   │   ├── compiler_v2.py  # v2 - Graph-based
+│   │   ├── compiler_v3.py  # v3 - Secure (RECOMENDADO)
+│   │   └── SECURITY.md     # Guia de segurança
 │   ├── decorators/     # @command, @cooldown, etc
 │   ├── models/         # Contexto, User, etc
 │   └── testing/        # Ferramentas de teste
 ├── blueprints/         # Editor visual HTML
-│   ├── compiler.py     # Compilador v1
-│   ├── compiler_v2.py  # Compilador v2 (graph)
-│   └── actions_meta.json
+│   ├── actions_meta.json
+│   └── ...
 ├── web/                # Blueprint Editor UI
 ├── examples/           # Exemplos de plugins
 └── templates/          # Templates para novos projetos
