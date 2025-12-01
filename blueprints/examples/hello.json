@@ -1,0 +1,23 @@
+{
+  "name": "Hello Blueprint",
+  "version": "1.0.0",
+  "author": "BotLive",
+  "description": "Greets the user and enqueues a demo macro",
+  "permissions": ["core:log", "chat:send", "macro:enqueue", "points:read", "points:write"],
+  "commands": {
+    "hello": [
+      {"type": "respond", "message": "Hello {username}!"},
+      {"type": "macro_run_keys", "keys": "wasd", "delay": 0.08}
+    ],
+    "buff": [
+      {"type": "if_points_at_least", "user": "{username}", "min": 50,
+       "then": [
+         {"type": "points_remove", "user": "{username}", "amount": 50, "reason": "buff"},
+         {"type": "respond", "message": "Buff applied (-50 pts)!"}
+       ],
+       "else": [
+         {"type": "respond", "message": "You need 50 points."}
+       ]}
+    ]
+  }
+}

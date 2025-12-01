@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chaos Blueprint Editor - Visual Node System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      /* Core colors - Unreal Engine inspired */
+      --bg-dark: #1a1a1a;
+      --bg-darker: #0d0d0d;
+      --bg-panel: #1e1e1e;
+      --bg-node: #262626;
+      --bg-node-header: #333;
+      --bg-node-selected: #1a3a5c;
+      --bg-input: #1a1a1a;
+      --border: #3a3a3a;
+      --border-light: #4a4a4a;
+      --border-focus: #5a9fff;
+      
+      /* Accent colors */
+      --primary: #4a9eff;
+      --primary-dark: #2e7dd0;
+      --primary-light: #6bb5ff;
+      --secondary: #9c6bff;
+      --success: #4caf50;
+      --success-dark: #388e3c;
+      --warning: #ff9800;
+      --error: #f44336;
+      --error-dark: #d32f2f;
+      
+      /* Text */
+      --text: #e8e8e8;
+      --text-secondary: #b0b0b0;
+      --text-muted: #707070;
+      --text-dark: #1a1a1a;
+      
+      /* Pin/Wire colors - UE4 style */
+      --exec-color: #ffffff;
+      --bool-color: #cc3333;
+      --int-color: #22ccaa;
+      --float-color: #77dd77;
+      --string-color: #ff6b9d;
+      --array-color: #9c6bff;
+      --object-color: #4a9eff;
+      --any-color: #aaaaaa;
+      
+      /* Node category colors */
+      --cat-events: #cc3333;
+      --cat-flow: #9c6bff;
+      --cat-math: #22ccaa;
+      --cat-string: #ff6b9d;
+      --cat-logic: #ffaa33;
+      --cat-data: #4a9eff;
+      --cat-actions: #4caf50;
+      --cat-audio: #ff6b9d;
+      --cat-input: #ff9800;
+      
+      /* Shadows and effects */
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --glow-primary: 0 0 12px rgba(74, 158, 255, 0.4);
+      --glow-error: 0 0 12px rgba(244, 67, 54, 0.4);
+      
+      /* Grid */
+      --grid-size: 20px;
+      --grid-color: rgba(255,255,255,0.03);
+      --grid-color-major: rgba(255,255,255,0.06);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-darker);
+      color: var(--text);
+      overflow: hidden;
+      height: 100vh;
+      user-select: none;
+    }
+
+    /* ==================== LAYOUT ==================== */
+    .app-container {
+      display: grid;
+      grid-template-areas: 
+        "toolbar toolbar toolbar"
+        "sidebar canvas inspector";
+      grid-template-rows: 52px 1fr;
+      grid-template-columns: 300px 1fr 340px;
+      height: 100vh;
+    }
+
+    /* ==================== TOOLBAR ==================== */
+    .toolbar {
+      grid-area: toolbar;
+      background: linear-gradient(180deg, #2a2a2a 0%, #1e1e1e 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      z-index: 100;
+    }
+
+    .toolbar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-right: 16px;
+      border-right: 1px solid var(--border);
+      margin-right: 8px;
+    }
+
+    .toolbar-logo svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .toolbar-logo h1 {
+      font-size: 15px;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 0 8px;
+      border-right: 1px solid var(--border);
+    }
+
+    .toolbar-group:last-child {
+      border-right: none;
+    }
+
+    .toolbar-group.flex-1 {
+      flex: 1;
+      justify-content: center;
+      border-right: none;
+    }
+
+    /* Command Tabs */
+    .command-tabs {
+      display: flex;
+      gap: 2px;
+      align-items: center;
+      max-width: 500px;
+      overflow-x: auto;
+      padding: 4px;
+      scrollbar-width: thin;
+    }
+
+    .command-tabs::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .command-tabs::-webkit-scrollbar-track {
+      background: var(--bg-darker);
+    }
+
+    .command-tabs::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 2px;
+    }
+
+    .command-tab {
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      color: var(--text-secondary);
+    }
+
+    .command-tab:hover {
+      background: var(--bg-node);
+      border-color: var(--border-light);
+      color: var(--text);
+    }
+
+    .command-tab.active {
+      background: linear-gradient(135deg, rgba(74, 158, 255, 0.2) 0%, rgba(156, 107, 255, 0.2) 100%);
+      border-color: var(--primary);
+      color: var(--primary-light);
+      font-weight: 600;
+    }
+
+    .command-tab .tab-icon {
+      font-size: 14px;
+    }
+
+    .command-tab .close-btn {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      opacity: 0.5;
+      transition: all 0.15s;
+    }
+
+    .command-tab .close-btn:hover {
+      opacity: 1;
+      background: var(--error);
+      color: white;
+    }
+
+    .add-tab-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--bg-dark);
+      border: 1px dashed var(--border);
+      color: var(--success);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .add-tab-btn:hover {
+      background: rgba(76, 175, 80, 0.15);
+      border-color: var(--success);
+      border-style: solid;
+    }
+
+    /* Toolbar Buttons */
+    .btn {
+      background: var(--bg-node);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 7px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: var(--bg-panel);
+      border-color: var(--border-light);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-icon {
+      width: 32px;
+      padding: 7px;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      box-shadow: var(--glow-primary);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+      border-color: var(--success);
+      color: white;
+    }
+
+    .btn-danger {
+      background: var(--bg-node);
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .btn-danger:hover {
+      background: var(--error);
+      color: white;
+    }
+
+    .btn-separator {
+      width: 1px;
+      height: 24px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    /* ==================== SIDEBAR ==================== */
+    .sidebar {
+      grid-area: sidebar;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-dark);
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-title svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary);
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px 10px 36px;
+      font-size: 13px;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--bg-darker);
+    }
+
+    .search-box input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .palette-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      scrollbar-width: thin;
+    }
+
+    .palette-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .palette-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .palette-container::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    .category {
+      margin-bottom: 16px;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      background: var(--bg-dark);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .category-header:hover {
+      background: var(--bg-node);
+    }
+
+    .category-header.collapsed + .category-nodes {
+      display: none;
+    }
+
+    .category-color {
+      width: 4px;
+      height: 16px;
+      border-radius: 2px;
+    }
+
+    .category-title {
+      flex: 1;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .category-count {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-darker);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .category-chevron {
+      transition: transform 0.2s;
+      color: var(--text-muted);
+    }
+
+    .category-header.collapsed .category-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .palette-node {
+      background: var(--bg-node);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 4px;
+      cursor: grab;
+      transition: all 0.15s;
+      border-left: 3px solid var(--border);
+    }
+
+    .palette-node:hover {
+      background: var(--bg-dark);
+      border-color: var(--border-light);
+      transform: translateX(2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .palette-node:active {
+      cursor: grabbing;
+    }
+
+    .palette-node.cat-events { border-left-color: var(--cat-events); }
+    .palette-node.cat-flow { border-left-color: var(--cat-flow); }
+    .palette-node.cat-math { border-left-color: var(--cat-math); }
+    .palette-node.cat-string { border-left-color: var(--cat-string); }
+    .palette-node.cat-logic { border-left-color: var(--cat-logic); }
+    .palette-node.cat-data { border-left-color: var(--cat-data); }
+    .palette-node.cat-actions { border-left-color: var(--cat-actions); }
+    .palette-node.cat-audio { border-left-color: var(--cat-audio); }
+    .palette-node.cat-input { border-left-color: var(--cat-input); }
+
+    .palette-node-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .palette-node-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .palette-node-icon {
+      font-size: 14px;
+    }
+
+    /* ==================== CANVAS ==================== */
+    .canvas-container {
+      grid-area: canvas;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-darker);
+    }
+
+    .canvas-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--grid-color) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color) 1px, transparent 1px),
+        linear-gradient(var(--grid-color-major) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color-major) 1px, transparent 1px);
+      background-size: 
+        var(--grid-size) var(--grid-size),
+        var(--grid-size) var(--grid-size),
+        calc(var(--grid-size) * 5) calc(var(--grid-size) * 5),
+        calc(var(--grid-size) * 5) calc(var(--grid-size) * 5);
+      pointer-events: none;
+    }
+
+    .canvas {
+      position: absolute;
+      transform-origin: 0 0;
+      width: 10000px;
+      height: 10000px;
+    }
+
+    #connections-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    #connections-svg path {
+      pointer-events: stroke;
+    }
+
+    /* Canvas Controls */
+    .canvas-controls {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-md);
+      z-index: 50;
+    }
+
+    .canvas-controls .btn {
+      padding: 8px 12px;
+    }
+
+    .zoom-display {
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-darker);
+      border-radius: 6px;
+      min-width: 60px;
+      text-align: center;
+    }
+
+    /* Mini map */
+    .minimap {
+      position: absolute;
+      bottom: 80px;
+      right: 20px;
+      width: 200px;
+      height: 140px;
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      z-index: 50;
+    }
+
+    .minimap-viewport {
+      position: absolute;
+      border: 2px solid var(--primary);
+      background: rgba(74, 158, 255, 0.1);
+      pointer-events: none;
+    }
+
+    .minimap-nodes {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .minimap-node {
+      position: absolute;
+      background: var(--primary);
+      border-radius: 2px;
+      opacity: 0.7;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: rgba(30, 30, 30, 0.9);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      z-index: 50;
+    }
+
+    .breadcrumb-item {
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .breadcrumb-separator {
+      color: var(--text-muted);
+    }
+
+    /* ==================== NODES ==================== */
+    .node {
+      position: absolute;
+      min-width: 200px;
+      background: var(--bg-node);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .node:hover {
+      border-color: var(--border-light);
+    }
+
+    .node.selected {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg), var(--glow-primary);
+      z-index: 20;
+    }
+
+    .node.dragging {
+      opacity: 0.9;
+      z-index: 100;
+    }
+
+    .node.error {
+      border-color: var(--error);
+      box-shadow: var(--shadow-lg), var(--glow-error);
+    }
+
+    .node-header {
+      padding: 10px 14px;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: move;
+      border-bottom: 1px solid rgba(0,0,0,0.3);
+    }
+
+    .node-header-icon {
+      font-size: 16px;
+    }
+
+    .node-header-title {
+      flex: 1;
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    .node-header-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.3);
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* Node category colors */
+    .node.cat-events .node-header { background: linear-gradient(135deg, #cc3333 0%, #992222 100%); }
+    .node.cat-flow .node-header { background: linear-gradient(135deg, #9c6bff 0%, #7544cc 100%); }
+    .node.cat-math .node-header { background: linear-gradient(135deg, #22ccaa 0%, #18997a 100%); }
+    .node.cat-string .node-header { background: linear-gradient(135deg, #ff6b9d 0%, #cc4477 100%); }
+    .node.cat-logic .node-header { background: linear-gradient(135deg, #ffaa33 0%, #cc8822 100%); }
+    .node.cat-data .node-header { background: linear-gradient(135deg, #4a9eff 0%, #3377cc 100%); }
+    .node.cat-actions .node-header { background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); }
+    .node.cat-audio .node-header { background: linear-gradient(135deg, #ff6b9d 0%, #cc4477 100%); }
+    .node.cat-input .node-header { background: linear-gradient(135deg, #ff9800 0%, #cc7700 100%); }
+
+    .node.pure-data {
+      background: #1a2a1a;
+      border-color: #2a4a2a;
+    }
+
+    .node.pure-data .node-header {
+      background: linear-gradient(135deg, #2a5a2a 0%, #1a3a1a 100%);
+    }
+
+    .node-body {
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Pins */
+    .node-pin {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 24px;
+      position: relative;
+    }
+
+    .node-pin.input {
+      margin-left: -14px;
+    }
+
+    .node-pin.output {
+      margin-right: -14px;
+      flex-direction: row-reverse;
+    }
+
+    .pin-socket {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      background: var(--bg-darker);
+      cursor: crosshair;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      z-index: 5;
+    }
+
+    .pin-socket:hover {
+      transform: scale(1.3);
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .pin-socket.connected {
+      background: currentColor;
+    }
+
+    .pin-socket.exec {
+      border-radius: 3px;
+      color: var(--exec-color);
+    }
+
+    .pin-socket.string { color: var(--string-color); }
+    .pin-socket.number { color: var(--int-color); }
+    .pin-socket.bool { color: var(--bool-color); }
+    .pin-socket.array { color: var(--array-color); }
+    .pin-socket.object { color: var(--object-color); }
+    .pin-socket.any { color: var(--any-color); }
+
+    .pin-socket.connecting {
+      animation: pulse 0.5s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+
+    .pin-socket.hover-compatible {
+      transform: scale(1.4);
+      background: currentColor;
+      box-shadow: 0 0 12px currentColor;
+    }
+
+    .pin-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .pin-value-input {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text);
+      width: 80px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .pin-value-input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .pin-value-select {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* Node comments */
+    .node-comment {
+      position: absolute;
+      top: -30px;
+      left: 0;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-style: italic;
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Comment box node */
+    .node.comment-box {
+      background: rgba(255, 200, 100, 0.1);
+      border: 2px dashed rgba(255, 200, 100, 0.4);
+      border-radius: 12px;
+      min-width: 300px;
+      min-height: 200px;
+    }
+
+    .node.comment-box .node-header {
+      background: transparent;
+      border-bottom: none;
+      padding: 12px 16px;
+    }
+
+    .node.comment-box .node-header-title {
+      color: rgba(255, 200, 100, 0.9);
+      font-size: 14px;
+    }
+
+    /* Reroute node */
+    .node.reroute {
+      min-width: auto;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-node);
+      border: 2px solid var(--border);
+      padding: 0;
+    }
+
+    .node.reroute .pin-socket {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .node.reroute .pin-socket.input {
+      left: -7px;
+    }
+
+    .node.reroute .pin-socket.output {
+      right: -7px;
+    }
+
+    /* ==================== CONNECTIONS ==================== */
+    .connection-path {
+      fill: none;
+      stroke-width: 3;
+      stroke-linecap: round;
+      transition: stroke-width 0.15s;
+    }
+
+    .connection-path:hover {
+      stroke-width: 5;
+      cursor: pointer;
+    }
+
+    .connection-path.exec { stroke: var(--exec-color); }
+    .connection-path.string { stroke: var(--string-color); }
+    .connection-path.number { stroke: var(--int-color); }
+    .connection-path.bool { stroke: var(--bool-color); }
+    .connection-path.array { stroke: var(--array-color); }
+    .connection-path.object { stroke: var(--object-color); }
+    .connection-path.any { stroke: var(--any-color); }
+
+    .connection-path.preview {
+      stroke-dasharray: 8, 4;
+      opacity: 0.7;
+      animation: dash 0.5s linear infinite;
+    }
+
+    @keyframes dash {
+      to { stroke-dashoffset: -12; }
+    }
+
+    /* ==================== INSPECTOR ==================== */
+    .inspector {
+      grid-area: inspector;
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .inspector-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-dark);
+    }
+
+    .inspector-title {
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .inspector-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .inspector-section {
+      margin-bottom: 20px;
+    }
+
+    .inspector-section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .inspector-field {
+      margin-bottom: 14px;
+    }
+
+    .inspector-field label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .inspector-field input,
+    .inspector-field textarea,
+    .inspector-field select {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--text);
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .inspector-field input:focus,
+    .inspector-field textarea:focus,
+    .inspector-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--bg-darker);
+    }
+
+    .inspector-field textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .inspector-field-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .inspector-field-row .inspector-field {
+      flex: 1;
+    }
+
+    .inspector-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .inspector-empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .inspector-empty-text {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* Node info in inspector */
+    .node-info-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .node-info-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .node-info-details h3 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .node-info-details span {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ==================== CONTEXT MENU ==================== */
+    .context-menu {
+      position: fixed;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow-lg);
+      min-width: 200px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 1000;
+      animation: contextFadeIn 0.15s ease;
+    }
+
+    @keyframes contextFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .context-menu-header {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .context-menu-search {
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .context-menu-search input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .context-menu-search input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .context-menu-items {
+      padding: 6px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .context-menu-category {
+      margin-bottom: 8px;
+    }
+
+    .context-menu-category-title {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      letter-spacing: 0.3px;
+    }
+
+    .context-menu-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      border-radius: 6px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.1s;
+      color: var(--text);
+    }
+
+    .context-menu-item:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .context-menu-item-icon {
+      width: 20px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .context-menu-item-label {
+      flex: 1;
+    }
+
+    .context-menu-item-shortcut {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .context-menu-item:hover .context-menu-item-shortcut {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .context-menu-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 6px 0;
+    }
+
+    /* ==================== DIALOGS ==================== */
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      animation: overlayFadeIn 0.2s ease;
+    }
+
+    @keyframes overlayFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .dialog {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-lg);
+      min-width: 400px;
+      max-width: 600px;
+      animation: dialogSlideIn 0.2s ease;
+    }
+
+    @keyframes dialogSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .dialog-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dialog-title {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .dialog-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: all 0.15s;
+    }
+
+    .dialog-close:hover {
+      background: var(--bg-dark);
+      color: var(--text);
+    }
+
+    .dialog-body {
+      padding: 24px;
+    }
+
+    .dialog-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* ==================== TOAST NOTIFICATIONS ==================== */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 3000;
+    }
+
+    .toast {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      animation: toastSlideIn 0.3s ease;
+      max-width: 400px;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .toast.hiding {
+      animation: toastSlideOut 0.3s ease forwards;
+    }
+
+    @keyframes toastSlideOut {
+      to {
+        opacity: 0;
+        transform: translateX(100px);
+      }
+    }
+
+    .toast-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .toast.success .toast-icon {
+      background: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
+    .toast.error .toast-icon {
+      background: rgba(244, 67, 54, 0.2);
+      color: var(--error);
+    }
+
+    .toast.warning .toast-icon {
+      background: rgba(255, 152, 0, 0.2);
+      color: var(--warning);
+    }
+
+    .toast.info .toast-icon {
+      background: rgba(74, 158, 255, 0.2);
+      color: var(--primary);
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .toast-message {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* ==================== SELECTION BOX ==================== */
+    .selection-box {
+      position: absolute;
+      border: 1px solid var(--primary);
+      background: rgba(74, 158, 255, 0.1);
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ==================== KEYBOARD SHORTCUTS HELP ==================== */
+    .shortcuts-panel {
+      position: fixed;
+      bottom: 80px;
+      left: 320px;
+      background: rgba(30, 30, 30, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      z-index: 100;
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .shortcuts-panel.visible {
+      display: block;
+    }
+
+    .shortcuts-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .shortcut-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+
+    .shortcut-keys {
+      display: flex;
+      gap: 4px;
+    }
+
+    .shortcut-key {
+      background: var(--bg-darker);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+
+    /* Blueprint list for load dialog */
+    .blueprint-list {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+
+    .blueprint-list-item {
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+
+    .blueprint-list-item:last-child {
+      border-bottom: none;
+    }
+
+    .blueprint-list-item:hover {
+      background: var(--bg-dark);
+    }
+
+    .blueprint-list-item.selected {
+      background: rgba(74, 158, 255, 0.2);
+      border-left: 3px solid var(--primary);
+    }
+
+    .blueprint-list-item-icon {
+      font-size: 24px;
+    }
+
+    .blueprint-list-item-info {
+      flex: 1;
+    }
+
+    .blueprint-list-item-name {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .blueprint-list-item-date {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ==================== RESPONSIVE ==================== */
+    @media (max-width: 1400px) {
+      .app-container {
+        grid-template-columns: 260px 1fr 300px;
+      }
+    }
+
+    @media (max-width: 1200px) {
+      .app-container {
+        grid-template-columns: 240px 1fr 280px;
+      }
+
+      .minimap {
+        display: none;
+      }
+    }
+
+    /* Collapsible Sidebar/Inspector */
+    .sidebar.collapsed, .inspector.collapsed {
+      width: 50px;
+      min-width: 50px;
+    }
+
+    .sidebar.collapsed .sidebar-header,
+    .sidebar.collapsed .palette-container,
+    .inspector.collapsed .inspector-header,
+    .inspector.collapsed .inspector-content {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <!-- ==================== TOOLBAR ==================== -->
+    <div class="toolbar">
+      <div class="toolbar-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" stroke="var(--primary)"/>
+          <path d="M2 17l10 5 10-5" stroke="var(--secondary)"/>
+          <path d="M2 12l10 5 10-5" stroke="var(--primary-light)"/>
+        </svg>
+        <h1>Chaos Blueprints</h1>
+      </div>
+
+      <div class="toolbar-group">
+        <button class="btn btn-icon" id="btn-undo" onclick="editor.undo()" title="Desfazer (Ctrl+Z)" disabled>
+          ↶
+        </button>
+        <button class="btn btn-icon" id="btn-redo" onclick="editor.redo()" title="Refazer (Ctrl+Y)" disabled>
+          ↷
+        </button>
+      </div>
+
+      <div class="toolbar-group flex-1">
+        <div class="command-tabs" id="command-tabs"></div>
+        <button class="add-tab-btn" onclick="editor.showAddCommandDialog()" title="Novo comando">+</button>
+      </div>
+
+      <div class="toolbar-group">
+        <button class="btn" onclick="editor.showSaveDialog()" title="Salvar projeto">
+          💾 <span>Salvar</span>
+        </button>
+        <button class="btn" onclick="editor.showLoadDialog()" title="Carregar projeto">
+          📂 <span>Carregar</span>
+        </button>
+        <button class="btn" onclick="editor.exportToFile()" title="Exportar arquivo">
+          ⬇️
+        </button>
+        <button class="btn" onclick="editor.importFromFile()" title="Importar arquivo">
+          ⬆️
+        </button>
+      </div>
+
+      <div class="toolbar-group">
+        <button class="btn" onclick="editor.validateAll()" title="Validar blueprint">
+          ✅ <span>Validar</span>
+        </button>
+        <button class="btn btn-primary" onclick="editor.compileAll()" title="Compilar para Python">
+          ⚙️ <span>Compilar</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          Biblioteca de Nós
+        </div>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="palette-search" placeholder="Buscar nós..." oninput="editor.filterPalette(this.value)">
+        </div>
+      </div>
+      <div class="palette-container" id="palette"></div>
+    </div>
+
+    <!-- ==================== CANVAS ==================== -->
+    <div class="canvas-container" id="canvas-container">
+      <div class="canvas-grid" id="canvas-grid"></div>
+      <svg id="connections-svg"></svg>
+      <div class="canvas" id="canvas"></div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb" id="breadcrumb">
+        <span class="breadcrumb-item" id="plugin-name-display">MeuPlugin</span>
+        <span class="breadcrumb-separator">▸</span>
+        <span class="breadcrumb-item active" id="command-name-display">hello</span>
+      </div>
+
+      <!-- Canvas Controls -->
+      <div class="canvas-controls">
+        <button class="btn btn-icon" onclick="editor.frameAll()" title="Enquadrar todos (Home)">🎯</button>
+        <button class="btn btn-icon" onclick="editor.zoomIn()" title="Zoom in (+)">➕</button>
+        <span class="zoom-display" id="zoom-display">100%</span>
+        <button class="btn btn-icon" onclick="editor.zoomOut()" title="Zoom out (-)">➖</button>
+        <div class="btn-separator"></div>
+        <button class="btn btn-icon" onclick="editor.toggleMinimap()" title="Minimapa">🗺️</button>
+        <button class="btn btn-icon" onclick="editor.toggleShortcuts()" title="Atalhos (?)">⌨️</button>
+      </div>
+
+      <!-- Minimap -->
+      <div class="minimap" id="minimap" style="display: none;">
+        <div class="minimap-nodes" id="minimap-nodes"></div>
+        <div class="minimap-viewport" id="minimap-viewport"></div>
+      </div>
+
+      <!-- Shortcuts Panel -->
+      <div class="shortcuts-panel" id="shortcuts-panel">
+        <div class="shortcuts-title">Atalhos do Teclado</div>
+        <div class="shortcut-item">
+          <span>Desfazer</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">Z</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Refazer</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">Y</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Copiar</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">C</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Colar</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">V</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Duplicar</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">D</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Selecionar todos</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span><span class="shortcut-key">A</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Deletar</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Del</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Enquadrar seleção</span>
+          <div class="shortcut-keys"><span class="shortcut-key">F</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Enquadrar todos</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Home</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Pan canvas</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Middle Mouse</span></div>
+        </div>
+        <div class="shortcut-item">
+          <span>Zoom</span>
+          <div class="shortcut-keys"><span class="shortcut-key">Scroll</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== INSPECTOR ==================== -->
+    <div class="inspector">
+      <div class="inspector-header">
+        <div class="inspector-title">
+          ⚙️ Propriedades
+        </div>
+      </div>
+      <div class="inspector-content" id="inspector-content">
+        <div class="inspector-empty">
+          <div class="inspector-empty-icon">📦</div>
+          <div class="inspector-empty-text">
+            Selecione um nó para editar suas propriedades<br>
+            <small style="color: var(--text-muted)">ou clique com botão direito no canvas para adicionar nós</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="blueprint_visual.js"></script>
+</body>
+</html>

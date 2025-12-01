@@ -1,0 +1,13 @@
+{
+    "name": "Hello World",
+    "version": "1.0.0",
+    "author": "Chaos Factory",
+    "description": "Plugin de exemplo que responde comandos básicos",
+    "commands": [
+        {
+            "name": "!hello",
+            "description": "Diz olá para o usuário",
+            "cooldown": 5
+        }
+    ]
+}

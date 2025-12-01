@@ -1,0 +1,903 @@
+{
+  "actions": [
+    {
+      "type": "respond",
+      "label": "Responder no chat",
+      "category": "Chat",
+      "fields": [
+        {"name": "message", "label": "Mensagem", "type": "string", "placeholder": "Hello {username}!", "required": true, "canConnect": true}
+      ]
+    },
+    {
+      "type": "chat_send",
+      "label": "Enviar chat (plataforma)",
+      "category": "Chat",
+      "fields": [
+        {"name": "message", "label": "Mensagem", "type": "string", "placeholder": "Olá {username}", "required": true, "canConnect": true},
+        {"name": "platform", "label": "Plataforma", "type": "select", "options": ["twitch", "youtube", "discord"], "default": "twitch"}
+      ]
+    },
+    {
+      "type": "const_string",
+      "label": "Texto",
+      "category": "Data",
+      "description": "Valor de texto constante",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "string", "placeholder": "Olá mundo!", "required": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Texto", "type": "string"}
+      ]
+    },
+    {
+      "type": "const_number",
+      "label": "Número",
+      "category": "Data",
+      "description": "Valor numérico constante",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Número", "type": "number"}
+      ]
+    },
+    {
+      "type": "get_username",
+      "label": "Nome do usuário",
+      "category": "Data",
+      "description": "Retorna o nome do usuário que executou",
+      "isPure": true,
+      "fields": [],
+      "outputs": [
+        {"name": "username", "label": "Username", "type": "string"}
+      ]
+    },
+    {
+      "type": "format_string",
+      "label": "Formatar texto",
+      "category": "Data",
+      "description": "Concatena ou formata strings",
+      "isPure": true,
+      "fields": [
+        {"name": "format", "label": "Formato", "type": "string", "placeholder": "Olá {0}! Você tem {1} pontos", "canConnect": true},
+        {"name": "arg0", "label": "Arg 0", "type": "string", "canConnect": true},
+        {"name": "arg1", "label": "Arg 1", "type": "string", "canConnect": true},
+        {"name": "arg2", "label": "Arg 2", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_concat",
+      "label": "Concatenar Strings",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "string", "canConnect": true},
+        {"name": "b", "label": "B", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_length",
+      "label": "Tamanho do Texto",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Texto", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Tamanho", "type": "number"}
+      ]
+    },
+    {
+      "type": "string_substring",
+      "label": "Substring",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "start", "label": "Início", "type": "number", "default": 0, "canConnect": true},
+        {"name": "end", "label": "Fim", "type": "number", "default": -1, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_contains",
+      "label": "Contém Texto",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "search", "label": "Buscar", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Contém", "type": "bool"}
+      ]
+    },
+    {
+      "type": "string_replace",
+      "label": "Substituir Texto",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "old", "label": "Antigo", "type": "string", "canConnect": true},
+        {"name": "new", "label": "Novo", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_split",
+      "label": "Dividir Texto",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "separator", "label": "Separador", "type": "string", "default": " ", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Lista", "type": "array"}
+      ]
+    },
+    {
+      "type": "string_upper",
+      "label": "Maiúsculas",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Texto", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_lower",
+      "label": "Minúsculas",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Texto", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_trim",
+      "label": "Remover Espaços",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Texto", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "string"}
+      ]
+    },
+    {
+      "type": "string_starts_with",
+      "label": "Começa Com",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "prefix", "label": "Prefixo", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "string_ends_with",
+      "label": "Termina Com",
+      "category": "String",
+      "isPure": true,
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "canConnect": true},
+        {"name": "suffix", "label": "Sufixo", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "math_add",
+      "label": "Somar",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_multiply",
+      "label": "Multiplicação (×)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 1, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_subtract",
+      "label": "Subtração (−)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_divide",
+      "label": "Divisão (÷)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 1, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_modulo",
+      "label": "Módulo (%)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 1, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_power",
+      "label": "Potência (^)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "base", "label": "Base", "type": "number", "default": 2, "canConnect": true},
+        {"name": "exponent", "label": "Expoente", "type": "number", "default": 2, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_sqrt",
+      "label": "Raiz Quadrada (√)",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 4, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_abs",
+      "label": "Valor Absoluto",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_min",
+      "label": "Mínimo",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_max",
+      "label": "Máximo",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_clamp",
+      "label": "Limitar Valor",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0, "canConnect": true},
+        {"name": "min", "label": "Mínimo", "type": "number", "default": 0, "canConnect": true},
+        {"name": "max", "label": "Máximo", "type": "number", "default": 100, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_floor",
+      "label": "Arredondar para Baixo",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_ceil",
+      "label": "Arredondar para Cima",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "math_round",
+      "label": "Arredondar",
+      "category": "Math",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "number"}
+      ]
+    },
+    {
+      "type": "compare_greater",
+      "label": "Maior que (>)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "compare_less",
+      "label": "Menor que (<)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "compare_equal",
+      "label": "Igual (==)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "string", "default": "", "canConnect": true},
+        {"name": "b", "label": "B", "type": "string", "default": "", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "compare_not_equal",
+      "label": "Diferente (!=)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "string", "default": "", "canConnect": true},
+        {"name": "b", "label": "B", "type": "string", "default": "", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "compare_greater_equal",
+      "label": "Maior ou Igual (≥)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "compare_less_equal",
+      "label": "Menor ou Igual (≤)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "number", "default": 0, "canConnect": true},
+        {"name": "b", "label": "B", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "logic_and",
+      "label": "E lógico (AND)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "bool", "canConnect": true},
+        {"name": "b", "label": "B", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "logic_or",
+      "label": "OU lógico (OR)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "bool", "canConnect": true},
+        {"name": "b", "label": "B", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "logic_not",
+      "label": "NÃO lógico (NOT)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "logic_xor",
+      "label": "OU Exclusivo (XOR)",
+      "category": "Logic",
+      "isPure": true,
+      "fields": [
+        {"name": "a", "label": "A", "type": "bool", "canConnect": true},
+        {"name": "b", "label": "B", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "branch",
+      "label": "Branch (Se/Então)",
+      "category": "Flow Control",
+      "fields": [
+        {"name": "condition", "label": "Condição", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "true", "label": "True", "type": "exec"},
+        {"name": "false", "label": "False", "type": "exec"}
+      ]
+    },
+    {
+      "type": "for_loop",
+      "label": "Loop For",
+      "category": "Flow Control",
+      "fields": [
+        {"name": "start", "label": "Início", "type": "number", "default": 0, "canConnect": true},
+        {"name": "end", "label": "Fim", "type": "number", "default": 10, "canConnect": true},
+        {"name": "step", "label": "Passo", "type": "number", "default": 1, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "loop_body", "label": "Corpo", "type": "exec"},
+        {"name": "index", "label": "Índice", "type": "number"},
+        {"name": "completed", "label": "Completo", "type": "exec"}
+      ]
+    },
+    {
+      "type": "while_loop",
+      "label": "Loop While",
+      "category": "Flow Control",
+      "fields": [
+        {"name": "condition", "label": "Condição", "type": "bool", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "loop_body", "label": "Corpo", "type": "exec"},
+        {"name": "completed", "label": "Completo", "type": "exec"}
+      ]
+    },
+    {
+      "type": "variable_get",
+      "label": "Obter Variável",
+      "category": "Variables",
+      "isPure": true,
+      "fields": [
+        {"name": "name", "label": "Nome", "type": "string", "placeholder": "minha_var", "required": true}
+      ],
+      "outputs": [
+        {"name": "value", "label": "Valor", "type": "any"}
+      ]
+    },
+    {
+      "type": "variable_set",
+      "label": "Definir Variável",
+      "category": "Variables",
+      "fields": [
+        {"name": "name", "label": "Nome", "type": "string", "placeholder": "minha_var", "required": true},
+        {"name": "value", "label": "Valor", "type": "string", "canConnect": true}
+      ]
+    },
+    {
+      "type": "variable_increment",
+      "label": "Incrementar Variável",
+      "category": "Variables",
+      "fields": [
+        {"name": "name", "label": "Nome", "type": "string", "placeholder": "contador", "required": true},
+        {"name": "amount", "label": "Quantidade", "type": "number", "default": 1, "canConnect": true}
+      ]
+    },
+    {
+      "type": "array_create",
+      "label": "Criar Lista",
+      "category": "Array",
+      "isPure": true,
+      "fields": [
+        {"name": "item0", "label": "Item 0", "type": "string", "canConnect": true},
+        {"name": "item1", "label": "Item 1", "type": "string", "canConnect": true},
+        {"name": "item2", "label": "Item 2", "type": "string", "canConnect": true},
+        {"name": "item3", "label": "Item 3", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "array", "label": "Lista", "type": "array"}
+      ]
+    },
+    {
+      "type": "array_get",
+      "label": "Obter Item da Lista",
+      "category": "Array",
+      "isPure": true,
+      "fields": [
+        {"name": "array", "label": "Lista", "type": "array", "canConnect": true},
+        {"name": "index", "label": "Índice", "type": "number", "default": 0, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "value", "label": "Valor", "type": "any"}
+      ]
+    },
+    {
+      "type": "array_length",
+      "label": "Tamanho da Lista",
+      "category": "Array",
+      "isPure": true,
+      "fields": [
+        {"name": "array", "label": "Lista", "type": "array", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "length", "label": "Tamanho", "type": "number"}
+      ]
+    },
+    {
+      "type": "array_contains",
+      "label": "Lista Contém",
+      "category": "Array",
+      "isPure": true,
+      "fields": [
+        {"name": "array", "label": "Lista", "type": "array", "canConnect": true},
+        {"name": "value", "label": "Valor", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Contém", "type": "bool"}
+      ]
+    },
+    {
+      "type": "array_join",
+      "label": "Juntar Lista",
+      "category": "Array",
+      "isPure": true,
+      "fields": [
+        {"name": "array", "label": "Lista", "type": "array", "canConnect": true},
+        {"name": "separator", "label": "Separador", "type": "string", "default": ", ", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Texto", "type": "string"}
+      ]
+    },
+    {
+      "type": "convert_to_string",
+      "label": "Converter para Texto",
+      "category": "Conversion",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "any", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Texto", "type": "string"}
+      ]
+    },
+    {
+      "type": "convert_to_number",
+      "label": "Converter para Número",
+      "category": "Conversion",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "string", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Número", "type": "number"}
+      ]
+    },
+    {
+      "type": "convert_to_bool",
+      "label": "Converter para Boolean",
+      "category": "Conversion",
+      "isPure": true,
+      "fields": [
+        {"name": "value", "label": "Valor", "type": "any", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Boolean", "type": "bool"}
+      ]
+    },
+    {
+      "type": "random_number",
+      "label": "Número Aleatório",
+      "category": "Random",
+      "isPure": true,
+      "fields": [
+        {"name": "min", "label": "Mínimo", "type": "number", "default": 0, "canConnect": true},
+        {"name": "max", "label": "Máximo", "type": "number", "default": 100, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Número", "type": "number"}
+      ]
+    },
+    {
+      "type": "random_choice",
+      "label": "Escolha Aleatória",
+      "category": "Random",
+      "isPure": true,
+      "fields": [
+        {"name": "choices", "label": "Opções (separadas por vírgula)", "type": "string", "placeholder": "opção1,opção2,opção3", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Escolha", "type": "string"}
+      ]
+    },
+    {
+      "type": "random_bool",
+      "label": "Boolean Aleatório",
+      "category": "Random",
+      "isPure": true,
+      "fields": [
+        {"name": "chance", "label": "Chance % (0-100)", "type": "number", "default": 50, "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Resultado", "type": "bool"}
+      ]
+    },
+    {
+      "type": "delay",
+      "label": "Aguardar",
+      "category": "Time",
+      "fields": [
+        {"name": "seconds", "label": "Segundos", "type": "number", "default": 1, "canConnect": true}
+      ]
+    },
+    {
+      "type": "get_timestamp",
+      "label": "Timestamp Atual",
+      "category": "Time",
+      "isPure": true,
+      "fields": [],
+      "outputs": [
+        {"name": "timestamp", "label": "Timestamp", "type": "number"}
+      ]
+    },
+    {
+      "type": "get_date_time",
+      "label": "Data/Hora Atual",
+      "category": "Time",
+      "isPure": true,
+      "fields": [
+        {"name": "format", "label": "Formato", "type": "string", "default": "%Y-%m-%d %H:%M:%S", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "result", "label": "Data/Hora", "type": "string"}
+      ]
+    },
+    {
+      "type": "macro_run_keys",
+      "label": "Macro: pressionar teclas",
+      "category": "Macros",
+      "fields": [
+        {"name": "keys", "label": "Teclas", "type": "string", "placeholder": "wasd", "required": true, "canConnect": true},
+        {"name": "delay", "label": "Atraso (s)", "type": "number", "step": 0.01, "default": 0.08, "canConnect": true}
+      ]
+    },
+    {
+      "type": "points_get",
+      "label": "Pontos: obter",
+      "category": "Points",
+      "fields": [
+        {"name": "user", "label": "Usuário", "type": "string", "placeholder": "{username}", "default": "{username}", "canConnect": true}
+      ],
+      "outputs": [
+        {"name": "points", "label": "Pontos", "type": "number"}
+      ]
+    },
+    {
+      "type": "points_add",
+      "label": "Pontos: adicionar",
+      "category": "Points",
+      "fields": [
+        {"name": "user", "label": "Usuário", "type": "string", "placeholder": "{username}", "default": "{username}", "canConnect": true},
+        {"name": "amount", "label": "Quantidade", "type": "number", "default": 10, "canConnect": true},
+        {"name": "reason", "label": "Motivo", "type": "string", "placeholder": "reward", "canConnect": true}
+      ]
+    },
+    {
+      "type": "points_remove",
+      "label": "Pontos: remover",
+      "category": "Points",
+      "fields": [
+        {"name": "user", "label": "Usuário", "type": "string", "placeholder": "{username}", "default": "{username}", "canConnect": true},
+        {"name": "amount", "label": "Quantidade", "type": "number", "default": 10, "canConnect": true},
+        {"name": "reason", "label": "Motivo", "type": "string", "placeholder": "penalty", "canConnect": true}
+      ]
+    },
+    {
+      "type": "if_points_at_least",
+      "label": "Se pontos >= mínimo",
+      "category": "Points",
+      "fields": [
+        {"name": "user", "label": "Usuário", "type": "string", "default": "{username}", "canConnect": true},
+        {"name": "min", "label": "Mínimo", "type": "number", "default": 50, "canConnect": true}
+      ],
+      "branches": ["then", "else"]
+    },
+    {
+      "type": "audio_tts",
+      "label": "Áudio: TTS",
+      "category": "Audio",
+      "fields": [
+        {"name": "text", "label": "Texto", "type": "string", "placeholder": "Olá {username}", "required": true, "canConnect": true},
+        {"name": "lang", "label": "Idioma", "type": "string", "default": "pt-br"}
+      ]
+    },
+    {
+      "type": "audio_play",
+      "label": "Áudio: tocar efeito",
+      "category": "Audio",
+      "fields": [
+        {"name": "name", "label": "Nome do efeito", "type": "string", "placeholder": "airhorn", "canConnect": true}
+      ]
+    },
+    {"type": "audio_stop", "label": "Áudio: parar", "category": "Audio", "fields": []},
+    {"type": "audio_clear", "label": "Áudio: limpar fila", "category": "Audio", "fields": []},
+    {
+      "type": "audio_queue_size",
+      "label": "Áudio: tamanho da fila",
+      "category": "Audio",
+      "fields": [
+        {"name": "store_as", "label": "Salvar em variável", "type": "string", "placeholder": "queue_size"}
+      ]
+    },
+    {
+      "type": "voting_start",
+      "label": "Votação: iniciar",
+      "category": "Voting",
+      "fields": [
+        {"name": "title", "label": "Título", "type": "string", "placeholder": "Qual classe?", "canConnect": true},
+        {"name": "options", "label": "Opções", "type": "list", "placeholder": "['A','B','C']"},
+        {"name": "duration_minutes", "label": "Duração (min)", "type": "number", "default": 5, "canConnect": true},
+        {"name": "allow_change", "label": "Permitir troca de voto", "type": "boolean", "default": true},
+        {"name": "require_points", "label": "Exigir pontos", "type": "number", "default": 0, "canConnect": true},
+        {"name": "creator", "label": "Criador", "type": "string", "default": "{username}", "canConnect": true},
+        {"name": "store_as", "label": "Salvar ID em", "type": "string", "default": "poll_id"}
+      ]
+    },
+    {
+      "type": "voting_vote",
+      "label": "Votação: votar",
+      "category": "Voting",
+      "fields": [
+        {"name": "poll_id", "label": "ID da votação", "type": "string", "placeholder": "{var:poll_id} ou {active}", "canConnect": true},
+        {"name": "option_index", "label": "Índice da opção", "type": "number", "default": 0, "canConnect": true}
+      ]
+    },
+    {
+      "type": "voting_end",
+      "label": "Votação: encerrar",
+      "category": "Voting",
+      "fields": [
+        {"name": "poll_id", "label": "ID da votação", "type": "string", "placeholder": "{var:poll_id} ou {active}", "canConnect": true},
+        {"name": "reason", "label": "Motivo", "type": "string", "default": "manual", "canConnect": true}
+      ]
+    },
+    {
+      "type": "get_active_poll",
+      "label": "Votação: obter ativa",
+      "category": "Voting",
+      "fields": [
+        {"name": "store_as", "label": "Salvar ID em", "type": "string", "default": "poll_id"}
+      ]
+    },
+    {
+      "type": "get_poll_results",
+      "label": "Votação: resultados",
+      "category": "Voting",
+      "fields": [
+        {"name": "poll_id", "label": "ID da votação", "type": "string", "placeholder": "{var:poll_id} ou {active}", "canConnect": true}
+      ]
+    },
+    {
+      "type": "leaderboard",
+      "label": "Leaderboard",
+      "category": "Leaderboard",
+      "fields": [
+        {"name": "limit", "label": "Limite", "type": "number", "default": 10, "canConnect": true},
+        {"name": "category", "label": "Categoria", "type": "string", "default": "points", "canConnect": true}
+      ]
+    },
+    {
+      "type": "minigames_command",
+      "label": "Minigame: comando",
+      "category": "Minigames",
+      "fields": [
+        {"name": "command", "label": "Comando", "type": "string", "placeholder": "start", "canConnect": true},
+        {"name": "args", "label": "Argumentos", "type": "list", "placeholder": "['easy']"}
+      ]
+    }
+  ]
+}

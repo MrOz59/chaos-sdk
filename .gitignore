@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Configurações sensíveis (IMPORTANTE!)
+config.json
+.env
+*.env
+!.env.example
+
+# Segurança e autenticação
+users.json
+*.key
+*.pem
+*.crt
+
+# Dados do bot
+bot_points.db
+*.db
+*.log
+logs/
+data/
+stats_runtime.json
+
+# Backups
+*_backup*.json
+web_interface_backup.html
+backups/*.json
+!backups/.gitkeep
+
+# Audio files (optional - você pode querer versionar alguns sons)
+sounds/*.mp3
+sounds/*.wav
+sounds/*.ogg
+!sounds/.gitkeep
+
+# Tokens e credenciais
+oauth_token.txt
+client_secret.txt
+secrets/
+*.pem
+*.key
+
+# Temporary files
+*.tmp
+*.bak
+temp/
+tmp/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Game backups
+games/*_backup.json
+games/*_deleted.json
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

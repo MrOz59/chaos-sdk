@@ -1,0 +1,1239 @@
+{
+  "_version": "2.0.0",
+  "_description": "Node templates for the visual Blueprint editor",
+  
+  "categories": {
+    "Events": {
+      "color": "#FF5555",
+      "icon": "⚡",
+      "description": "Trigger points for plugin execution"
+    },
+    "Actions": {
+      "color": "#5588FF",
+      "icon": "▶",
+      "description": "Execute actions in the game/chat"
+    },
+    "Flow Control": {
+      "color": "#AA55FF",
+      "icon": "⤵",
+      "description": "Control execution flow"
+    },
+    "Data": {
+      "color": "#55FF88",
+      "icon": "📦",
+      "description": "Data manipulation and storage"
+    },
+    "Math": {
+      "color": "#FFAA55",
+      "icon": "🔢",
+      "description": "Mathematical operations"
+    },
+    "String": {
+      "color": "#55FFFF",
+      "icon": "📝",
+      "description": "Text manipulation"
+    },
+    "Array": {
+      "color": "#FF55AA",
+      "icon": "📋",
+      "description": "List/array operations"
+    },
+    "User": {
+      "color": "#FFFF55",
+      "icon": "👤",
+      "description": "User-related operations"
+    },
+    "Audio": {
+      "color": "#55AA55",
+      "icon": "🔊",
+      "description": "Audio playback control"
+    },
+    "Input": {
+      "color": "#FF8855",
+      "icon": "🎮",
+      "description": "Keyboard/mouse input"
+    },
+    "Voting": {
+      "color": "#8855FF",
+      "icon": "📊",
+      "description": "Voting system"
+    },
+    "Debug": {
+      "color": "#888888",
+      "icon": "🔍",
+      "description": "Debugging utilities"
+    }
+  },
+  
+  "nodes": {
+    "event_start": {
+      "label": "On Command",
+      "category": "Events",
+      "description": "Triggered when the command is executed",
+      "isPure": false,
+      "inputs": [],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "user", "type": "string", "label": "User"},
+        {"name": "args", "type": "array", "label": "Arguments"},
+        {"name": "message", "type": "string", "label": "Message"}
+      ]
+    },
+    
+    "event_chat": {
+      "label": "On Chat Message",
+      "category": "Events",
+      "description": "Triggered on every chat message",
+      "isPure": false,
+      "inputs": [],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "user", "type": "string", "label": "User"},
+        {"name": "message", "type": "string", "label": "Message"}
+      ]
+    },
+    
+    "event_timer": {
+      "label": "On Timer",
+      "category": "Events",
+      "description": "Triggered at regular intervals",
+      "isPure": false,
+      "inputs": [],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "time", "type": "number", "label": "Elapsed Time"}
+      ]
+    },
+    
+    "send_message": {
+      "label": "Send Message",
+      "category": "Actions",
+      "description": "Send a message to chat",
+      "permission": "chat:send",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "message", "type": "string", "label": "Message", "default": ""}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "send_whisper": {
+      "label": "Send Whisper",
+      "category": "Actions",
+      "description": "Send a private message to user",
+      "permission": "chat:send",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "user", "type": "string", "label": "Username"},
+        {"name": "message", "type": "string", "label": "Message"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "log": {
+      "label": "Log",
+      "category": "Debug",
+      "description": "Log a message to console",
+      "permission": "core:log",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "message", "type": "any", "label": "Message"},
+        {"name": "level", "type": "string", "label": "Level", "default": "info", "options": ["debug", "info", "warning", "error"]}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "get_points": {
+      "label": "Get Points",
+      "category": "User",
+      "description": "Get user's current points",
+      "permission": "points:read",
+      "isPure": true,
+      "inputs": [
+        {"name": "user", "type": "string", "label": "Username"}
+      ],
+      "outputs": [
+        {"name": "points", "type": "number", "label": "Points"}
+      ]
+    },
+    
+    "add_points": {
+      "label": "Add Points",
+      "category": "User",
+      "description": "Add points to user",
+      "permission": "points:write",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "user", "type": "string", "label": "Username"},
+        {"name": "amount", "type": "number", "label": "Amount", "default": 0}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "new_total", "type": "number", "label": "New Total"}
+      ]
+    },
+    
+    "remove_points": {
+      "label": "Remove Points",
+      "category": "User",
+      "description": "Remove points from user",
+      "permission": "points:write",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "user", "type": "string", "label": "Username"},
+        {"name": "amount", "type": "number", "label": "Amount", "default": 0}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "new_total", "type": "number", "label": "New Total"}
+      ]
+    },
+    
+    "press_key": {
+      "label": "Press Key",
+      "category": "Input",
+      "description": "Simulate key press",
+      "permission": "input:keyboard",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "key", "type": "string", "label": "Key"},
+        {"name": "hold", "type": "number", "label": "Hold (ms)", "default": 100}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "hold_key": {
+      "label": "Hold Key",
+      "category": "Input",
+      "description": "Hold key down",
+      "permission": "input:keyboard",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "key", "type": "string", "label": "Key"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "release_key": {
+      "label": "Release Key",
+      "category": "Input",
+      "description": "Release held key",
+      "permission": "input:keyboard",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "key", "type": "string", "label": "Key"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "mouse_click": {
+      "label": "Mouse Click",
+      "category": "Input",
+      "description": "Simulate mouse click",
+      "permission": "input:mouse",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "button", "type": "string", "label": "Button", "default": "left", "options": ["left", "right", "middle"]},
+        {"name": "x", "type": "number", "label": "X (optional)", "default": null},
+        {"name": "y", "type": "number", "label": "Y (optional)", "default": null}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "mouse_move": {
+      "label": "Mouse Move",
+      "category": "Input",
+      "description": "Move mouse to position",
+      "permission": "input:mouse",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "x", "type": "number", "label": "X"},
+        {"name": "y", "type": "number", "label": "Y"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "play_sound": {
+      "label": "Play Sound",
+      "category": "Audio",
+      "description": "Play a sound effect",
+      "permission": "audio:play",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "sound", "type": "string", "label": "Sound File"},
+        {"name": "volume", "type": "number", "label": "Volume (0-1)", "default": 1.0}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "play_tts": {
+      "label": "Text to Speech",
+      "category": "Audio",
+      "description": "Play text as speech",
+      "permission": "audio:tts",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "text", "type": "string", "label": "Text"},
+        {"name": "voice", "type": "string", "label": "Voice", "default": "default"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "stop_audio": {
+      "label": "Stop Audio",
+      "category": "Audio",
+      "description": "Stop all audio playback",
+      "permission": "audio:play",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "start_vote": {
+      "label": "Start Vote",
+      "category": "Voting",
+      "description": "Start a new vote",
+      "permission": "voting:manage",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "title", "type": "string", "label": "Title"},
+        {"name": "options", "type": "array", "label": "Options"},
+        {"name": "duration", "type": "number", "label": "Duration (sec)", "default": 60}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "vote_id", "type": "string", "label": "Vote ID"}
+      ]
+    },
+    
+    "end_vote": {
+      "label": "End Vote",
+      "category": "Voting",
+      "description": "End an active vote",
+      "permission": "voting:manage",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "vote_id", "type": "string", "label": "Vote ID"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "winner", "type": "string", "label": "Winner"},
+        {"name": "results", "type": "object", "label": "Results"}
+      ]
+    },
+    
+    "branch": {
+      "label": "Branch (If)",
+      "category": "Flow Control",
+      "description": "Conditional branching",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "condition", "type": "boolean", "label": "Condition"}
+      ],
+      "outputs": [
+        {"name": "true", "type": "exec", "label": "True"},
+        {"name": "false", "type": "exec", "label": "False"}
+      ]
+    },
+    
+    "sequence": {
+      "label": "Sequence",
+      "category": "Flow Control",
+      "description": "Execute multiple branches in order",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ],
+      "outputs": [
+        {"name": "then_0", "type": "exec", "label": "Then 0"},
+        {"name": "then_1", "type": "exec", "label": "Then 1"},
+        {"name": "then_2", "type": "exec", "label": "Then 2"}
+      ]
+    },
+    
+    "for_loop": {
+      "label": "For Loop",
+      "category": "Flow Control",
+      "description": "Loop from start to end",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "start", "type": "number", "label": "Start", "default": 0},
+        {"name": "end", "type": "number", "label": "End", "default": 10}
+      ],
+      "outputs": [
+        {"name": "loop", "type": "exec", "label": "Loop Body"},
+        {"name": "index", "type": "number", "label": "Index"},
+        {"name": "completed", "type": "exec", "label": "Completed"}
+      ]
+    },
+    
+    "for_each": {
+      "label": "For Each",
+      "category": "Flow Control",
+      "description": "Iterate over array items",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "array", "type": "array", "label": "Array"}
+      ],
+      "outputs": [
+        {"name": "loop", "type": "exec", "label": "Loop Body"},
+        {"name": "item", "type": "any", "label": "Item"},
+        {"name": "index", "type": "number", "label": "Index"},
+        {"name": "completed", "type": "exec", "label": "Completed"}
+      ]
+    },
+    
+    "while_loop": {
+      "label": "While Loop",
+      "category": "Flow Control",
+      "description": "Loop while condition is true",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "condition", "type": "boolean", "label": "Condition"}
+      ],
+      "outputs": [
+        {"name": "loop", "type": "exec", "label": "Loop Body"},
+        {"name": "completed", "type": "exec", "label": "Completed"}
+      ]
+    },
+    
+    "delay": {
+      "label": "Delay",
+      "category": "Flow Control",
+      "description": "Wait for duration before continuing",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "duration", "type": "number", "label": "Seconds", "default": 1}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "math_add": {
+      "label": "Add (+)",
+      "category": "Math",
+      "description": "Add two numbers",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A", "default": 0},
+        {"name": "b", "type": "number", "label": "B", "default": 0}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_subtract": {
+      "label": "Subtract (-)",
+      "category": "Math",
+      "description": "Subtract B from A",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A", "default": 0},
+        {"name": "b", "type": "number", "label": "B", "default": 0}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_multiply": {
+      "label": "Multiply (×)",
+      "category": "Math",
+      "description": "Multiply two numbers",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A", "default": 0},
+        {"name": "b", "type": "number", "label": "B", "default": 0}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_divide": {
+      "label": "Divide (÷)",
+      "category": "Math",
+      "description": "Divide A by B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A", "default": 0},
+        {"name": "b", "type": "number", "label": "B", "default": 1}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_modulo": {
+      "label": "Modulo (%)",
+      "category": "Math",
+      "description": "Remainder of A / B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A", "default": 0},
+        {"name": "b", "type": "number", "label": "B", "default": 1}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_power": {
+      "label": "Power",
+      "category": "Math",
+      "description": "A raised to power B",
+      "isPure": true,
+      "inputs": [
+        {"name": "base", "type": "number", "label": "Base", "default": 0},
+        {"name": "exponent", "type": "number", "label": "Exponent", "default": 2}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_abs": {
+      "label": "Absolute Value",
+      "category": "Math",
+      "description": "Absolute value of number",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_min": {
+      "label": "Minimum",
+      "category": "Math",
+      "description": "Smaller of two numbers",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_max": {
+      "label": "Maximum",
+      "category": "Math",
+      "description": "Larger of two numbers",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_clamp": {
+      "label": "Clamp",
+      "category": "Math",
+      "description": "Clamp value between min and max",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value"},
+        {"name": "min", "type": "number", "label": "Min", "default": 0},
+        {"name": "max", "type": "number", "label": "Max", "default": 100}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_round": {
+      "label": "Round",
+      "category": "Math",
+      "description": "Round to nearest integer",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_floor": {
+      "label": "Floor",
+      "category": "Math",
+      "description": "Round down to integer",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "math_ceil": {
+      "label": "Ceiling",
+      "category": "Math",
+      "description": "Round up to integer",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "random_int": {
+      "label": "Random Integer",
+      "category": "Math",
+      "description": "Random integer in range",
+      "isPure": true,
+      "inputs": [
+        {"name": "min", "type": "number", "label": "Min", "default": 0},
+        {"name": "max", "type": "number", "label": "Max", "default": 100}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "random_float": {
+      "label": "Random Float",
+      "category": "Math",
+      "description": "Random decimal in range",
+      "isPure": true,
+      "inputs": [
+        {"name": "min", "type": "number", "label": "Min", "default": 0},
+        {"name": "max", "type": "number", "label": "Max", "default": 1}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Result"}
+      ]
+    },
+    
+    "random_choice": {
+      "label": "Random Choice",
+      "category": "Math",
+      "description": "Pick random item from array",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Options"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "any", "label": "Result"}
+      ]
+    },
+    
+    "compare_equal": {
+      "label": "Equal (==)",
+      "category": "Data",
+      "description": "Check if A equals B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "any", "label": "A"},
+        {"name": "b", "type": "any", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "compare_not_equal": {
+      "label": "Not Equal (!=)",
+      "category": "Data",
+      "description": "Check if A not equals B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "any", "label": "A"},
+        {"name": "b", "type": "any", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "compare_greater": {
+      "label": "Greater Than (>)",
+      "category": "Data",
+      "description": "Check if A > B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "compare_less": {
+      "label": "Less Than (<)",
+      "category": "Data",
+      "description": "Check if A < B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "compare_greater_equal": {
+      "label": "Greater or Equal (>=)",
+      "category": "Data",
+      "description": "Check if A >= B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "compare_less_equal": {
+      "label": "Less or Equal (<=)",
+      "category": "Data",
+      "description": "Check if A <= B",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "number", "label": "A"},
+        {"name": "b", "type": "number", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "logic_and": {
+      "label": "AND",
+      "category": "Data",
+      "description": "Logical AND",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "boolean", "label": "A"},
+        {"name": "b", "type": "boolean", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "logic_or": {
+      "label": "OR",
+      "category": "Data",
+      "description": "Logical OR",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "boolean", "label": "A"},
+        {"name": "b", "type": "boolean", "label": "B"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "logic_not": {
+      "label": "NOT",
+      "category": "Data",
+      "description": "Logical NOT (invert)",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "boolean", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "string_concat": {
+      "label": "Concat",
+      "category": "String",
+      "description": "Join strings together",
+      "isPure": true,
+      "inputs": [
+        {"name": "a", "type": "string", "label": "A", "default": ""},
+        {"name": "b", "type": "string", "label": "B", "default": ""}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_format": {
+      "label": "Format String",
+      "category": "String",
+      "description": "Format string with values",
+      "isPure": true,
+      "inputs": [
+        {"name": "template", "type": "string", "label": "Template", "default": "Hello {0}!"},
+        {"name": "values", "type": "array", "label": "Values"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_length": {
+      "label": "String Length",
+      "category": "String",
+      "description": "Get length of string",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"}
+      ],
+      "outputs": [
+        {"name": "length", "type": "number", "label": "Length"}
+      ]
+    },
+    
+    "string_upper": {
+      "label": "To Uppercase",
+      "category": "String",
+      "description": "Convert to uppercase",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_lower": {
+      "label": "To Lowercase",
+      "category": "String",
+      "description": "Convert to lowercase",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_split": {
+      "label": "Split",
+      "category": "String",
+      "description": "Split string by delimiter",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "delimiter", "type": "string", "label": "Delimiter", "default": " "}
+      ],
+      "outputs": [
+        {"name": "result", "type": "array", "label": "Array"}
+      ]
+    },
+    
+    "string_join": {
+      "label": "Join",
+      "category": "String",
+      "description": "Join array with delimiter",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"},
+        {"name": "delimiter", "type": "string", "label": "Delimiter", "default": ", "}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_replace": {
+      "label": "Replace",
+      "category": "String",
+      "description": "Replace substring",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "find", "type": "string", "label": "Find"},
+        {"name": "replace", "type": "string", "label": "Replace With"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_contains": {
+      "label": "Contains",
+      "category": "String",
+      "description": "Check if string contains substring",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "search", "type": "string", "label": "Search For"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Contains"}
+      ]
+    },
+    
+    "string_starts_with": {
+      "label": "Starts With",
+      "category": "String",
+      "description": "Check if string starts with prefix",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "prefix", "type": "string", "label": "Prefix"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "string_ends_with": {
+      "label": "Ends With",
+      "category": "String",
+      "description": "Check if string ends with suffix",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "suffix", "type": "string", "label": "Suffix"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Result"}
+      ]
+    },
+    
+    "string_substring": {
+      "label": "Substring",
+      "category": "String",
+      "description": "Extract part of string",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"},
+        {"name": "start", "type": "number", "label": "Start", "default": 0},
+        {"name": "end", "type": "number", "label": "End (optional)"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "string_trim": {
+      "label": "Trim",
+      "category": "String",
+      "description": "Remove whitespace from ends",
+      "isPure": true,
+      "inputs": [
+        {"name": "string", "type": "string", "label": "String"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Result"}
+      ]
+    },
+    
+    "to_string": {
+      "label": "To String",
+      "category": "Data",
+      "description": "Convert value to string",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "any", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "String"}
+      ]
+    },
+    
+    "to_number": {
+      "label": "To Number",
+      "category": "Data",
+      "description": "Convert value to number",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "any", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "number", "label": "Number"}
+      ]
+    },
+    
+    "to_boolean": {
+      "label": "To Boolean",
+      "category": "Data",
+      "description": "Convert value to boolean",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "any", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Boolean"}
+      ]
+    },
+    
+    "array_create": {
+      "label": "Make Array",
+      "category": "Array",
+      "description": "Create array from values",
+      "isPure": true,
+      "inputs": [
+        {"name": "item_0", "type": "any", "label": "Item 0"},
+        {"name": "item_1", "type": "any", "label": "Item 1"},
+        {"name": "item_2", "type": "any", "label": "Item 2"}
+      ],
+      "outputs": [
+        {"name": "array", "type": "array", "label": "Array"}
+      ]
+    },
+    
+    "array_length": {
+      "label": "Array Length",
+      "category": "Array",
+      "description": "Get number of items",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"}
+      ],
+      "outputs": [
+        {"name": "length", "type": "number", "label": "Length"}
+      ]
+    },
+    
+    "array_get": {
+      "label": "Get Item",
+      "category": "Array",
+      "description": "Get item at index",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"},
+        {"name": "index", "type": "number", "label": "Index", "default": 0}
+      ],
+      "outputs": [
+        {"name": "item", "type": "any", "label": "Item"}
+      ]
+    },
+    
+    "array_first": {
+      "label": "First Item",
+      "category": "Array",
+      "description": "Get first item",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"}
+      ],
+      "outputs": [
+        {"name": "item", "type": "any", "label": "Item"}
+      ]
+    },
+    
+    "array_last": {
+      "label": "Last Item",
+      "category": "Array",
+      "description": "Get last item",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"}
+      ],
+      "outputs": [
+        {"name": "item", "type": "any", "label": "Item"}
+      ]
+    },
+    
+    "array_contains": {
+      "label": "Contains Item",
+      "category": "Array",
+      "description": "Check if array contains item",
+      "isPure": true,
+      "inputs": [
+        {"name": "array", "type": "array", "label": "Array"},
+        {"name": "item", "type": "any", "label": "Item"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "boolean", "label": "Contains"}
+      ]
+    },
+    
+    "array_append": {
+      "label": "Append",
+      "category": "Array",
+      "description": "Add item to end of array",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "array", "type": "array", "label": "Array"},
+        {"name": "item", "type": "any", "label": "Item"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "array", "type": "array", "label": "Array"}
+      ]
+    },
+    
+    "array_remove": {
+      "label": "Remove Item",
+      "category": "Array",
+      "description": "Remove item from array",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "array", "type": "array", "label": "Array"},
+        {"name": "item", "type": "any", "label": "Item"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "array", "type": "array", "label": "Array"}
+      ]
+    },
+    
+    "set_variable": {
+      "label": "Set Variable",
+      "category": "Data",
+      "description": "Store value in variable",
+      "isPure": false,
+      "inputs": [
+        {"name": "exec", "type": "exec", "label": "▶"},
+        {"name": "name", "type": "string", "label": "Variable Name"},
+        {"name": "value", "type": "any", "label": "Value"}
+      ],
+      "outputs": [
+        {"name": "exec", "type": "exec", "label": "▶"}
+      ]
+    },
+    
+    "get_variable": {
+      "label": "Get Variable",
+      "category": "Data",
+      "description": "Retrieve value from variable",
+      "isPure": true,
+      "inputs": [
+        {"name": "name", "type": "string", "label": "Variable Name"}
+      ],
+      "outputs": [
+        {"name": "value", "type": "any", "label": "Value"}
+      ]
+    },
+    
+    "literal_string": {
+      "label": "String",
+      "category": "Data",
+      "description": "Literal string value",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "string", "label": "Value", "default": ""}
+      ],
+      "outputs": [
+        {"name": "value", "type": "string", "label": "Value"}
+      ]
+    },
+    
+    "literal_number": {
+      "label": "Number",
+      "category": "Data",
+      "description": "Literal number value",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "number", "label": "Value", "default": 0}
+      ],
+      "outputs": [
+        {"name": "value", "type": "number", "label": "Value"}
+      ]
+    },
+    
+    "literal_boolean": {
+      "label": "Boolean",
+      "category": "Data",
+      "description": "Literal boolean value",
+      "isPure": true,
+      "inputs": [
+        {"name": "value", "type": "boolean", "label": "Value", "default": true, "options": [true, false]}
+      ],
+      "outputs": [
+        {"name": "value", "type": "boolean", "label": "Value"}
+      ]
+    },
+    
+    "time_now": {
+      "label": "Current Time",
+      "category": "Data",
+      "description": "Get current timestamp",
+      "isPure": true,
+      "inputs": [],
+      "outputs": [
+        {"name": "timestamp", "type": "number", "label": "Timestamp"},
+        {"name": "formatted", "type": "string", "label": "Formatted"}
+      ]
+    },
+    
+    "time_format": {
+      "label": "Format Time",
+      "category": "Data",
+      "description": "Format timestamp as string",
+      "isPure": true,
+      "inputs": [
+        {"name": "timestamp", "type": "number", "label": "Timestamp"},
+        {"name": "format", "type": "string", "label": "Format", "default": "%H:%M:%S"}
+      ],
+      "outputs": [
+        {"name": "result", "type": "string", "label": "Formatted"}
+      ]
+    },
+    
+    "comment": {
+      "label": "Comment",
+      "category": "Debug",
+      "description": "A note that doesn't execute",
+      "isPure": true,
+      "isComment": true,
+      "inputs": [
+        {"name": "text", "type": "string", "label": "Note", "default": ""}
+      ],
+      "outputs": []
+    }
+  }
+}

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chaos-sdk"
+version = "1.2.0"
+description = "SDK para criar plugins e jogos para Chaos Factory - Compatível com chaos-server"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+keywords = ["chaos", "twitch", "kick", "bot", "plugins", "streaming"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+Homepage = "https://chaos.mroz.dev.br"
+Documentation = "https://chaos.mroz.dev.br/docs/sdk"
+Repository = "https://github.com/mroz-dev/chaos-sdk"
+
+[project.scripts]
+chaos-sdk = "chaos_sdk.cli:main"
+chaos-plugin = "chaos_sdk.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.0.0",
+]

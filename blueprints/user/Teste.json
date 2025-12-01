@@ -1,0 +1,27 @@
+{
+  "name": "Visual Blueprint",
+  "version": "1.0.0",
+  "author": "You",
+  "description": "Created with visual editor",
+  "permissions": [
+    "core:log",
+    "chat:send",
+    "macro:enqueue",
+    "points:read",
+    "points:write"
+  ],
+  "commands": {
+    "Teste3": [
+      {
+        "type": "chat_send",
+        "message": "",
+        "platform": "twitch"
+      },
+      {
+        "type": "audio_tts",
+        "text": "",
+        "lang": "pt-br"
+      }
+    ]
+  }
+}
