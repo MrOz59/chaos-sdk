@@ -16,11 +16,71 @@
 
 - 🎮 **Game Development** - Crie jogos interativos para lives
 - 🔌 **Plugin System** - Estenda funcionalidades do servidor
-- 🎨 **Blueprints** - Editor visual de lógica
+- 🎨 **Visual Blueprints** - Editor visual estilo Unreal Engine
 - 🧪 **Testing Tools** - Teste localmente antes de publicar
 - 📦 **Easy Publishing** - Publique no Marketplace
 
-## 🚀 Quick Start
+## 🎨 Blueprint Editor - Crie Plugins Sem Código!
+
+O SDK inclui um **editor visual de blueprints** inspirado no Unreal Engine.
+Crie plugins arrastando e conectando blocos, sem escrever uma linha de código!
+
+### Features do Blueprint Editor
+
+- 🔗 **Node Graph** - Conecte blocos visualmente
+- ⚡ **Compilação Inteligente** - Gera código Python otimizado
+- ✅ **Validação em Tempo Real** - Detecta erros enquanto cria
+- 🎯 **Ações Prontas** - Chat, TTS, Pontos, Macros e mais
+- 📤 **Exportar** - Baixe o plugin pronto para usar
+
+### Usar o Blueprint Editor
+
+```bash
+# Iniciar o editor visual
+python -m chaos_sdk.blueprints.api
+
+# Acesse no navegador
+# http://localhost:8080
+```
+
+### Exemplo de Blueprint (JSON)
+
+```json
+{
+  "name": "MeuPlugin",
+  "version": "1.0.0",
+  "author": "SeuNome",
+  "description": "Plugin criado com blueprints",
+  "permissions": ["chat:send", "audio:tts"],
+  "commands": {
+    "ola": [
+      {"type": "respond", "message": "Olá, {username}!"},
+      {"type": "audio_tts", "text": "Bem-vindo!"}
+    ]
+  }
+}
+```
+
+### Compilar Blueprint para Python
+
+```python
+from chaos_sdk.blueprints import compile_blueprint_v2
+
+# Carregar blueprint JSON
+with open("meu_plugin.json") as f:
+    blueprint = json.load(f)
+
+# Compilar
+result = compile_blueprint_v2(blueprint)
+
+if result.success:
+    print(result.code)  # Código Python gerado
+else:
+    for msg in result.messages:
+        print(f"{msg.severity}: {msg.message}")
+```
+
+## 🚀 Quick Start - Código Python
 
 ### Instalação
 
@@ -30,22 +90,23 @@ pip install chaos-sdk
 pip install -e .
 ```
 
-### Criar Plugin
+### Criar Plugin com Código
 
 ```python
-from chaos_sdk import Plugin, command, event
+from chaos_sdk import Plugin, command
 
 class MeuPlugin(Plugin):
     name = "Meu Plugin"
     version = "1.0.0"
+    author = "SeuNome"
+    description = "Meu primeiro plugin"
+    required_permissions = ["chat:send"]
     
-    @command("!ola")
-    async def hello(self, ctx):
-        await ctx.reply(f"Olá {ctx.user}!")
+    def on_load(self):
+        self.register_command("ola", self.cmd_ola)
     
-    @event("on_subscribe")
-    async def on_sub(self, event):
-        await event.send_tts(f"Obrigado pelo sub {event.user}!")
+    def cmd_ola(self, username, args, **kwargs):
+        return f"Olá, {username}!"
 ```
 
 ### Testar Localmente
@@ -64,7 +125,7 @@ python -m chaos_sdk.cli publish meu_plugin.py
 
 - [Guia Completo (PT-BR)](README.pt-BR.md)
 - [Full Guide (English)](README.en.md)
-- [API Reference](docs/)
+- [Referência de Blocos](blueprints/BLOCKS_REFERENCE.md)
 - [Exemplos](examples/)
 
 ## 📁 Estrutura
@@ -72,48 +133,53 @@ python -m chaos_sdk.cli publish meu_plugin.py
 ```
 chaos-sdk/
 ├── chaos_sdk/           # SDK principal
-│   ├── core/           # Classes base
-│   ├── decorators/     # @command, @event, etc
-│   ├── models/         # Modelos de dados
+│   ├── core/           # Classes base (Plugin, Command, etc)
+│   ├── blueprints/     # Compilador de blueprints
+│   ├── decorators/     # @command, @cooldown, etc
+│   ├── models/         # Contexto, User, etc
 │   └── testing/        # Ferramentas de teste
-├── blueprints/         # Sistema de blueprints visual
+├── blueprints/         # Editor visual HTML
+│   ├── compiler.py     # Compilador v1
+│   ├── compiler_v2.py  # Compilador v2 (graph)
+│   └── actions_meta.json
+├── web/                # Blueprint Editor UI
 ├── examples/           # Exemplos de plugins
-├── templates/          # Templates para novos projetos
-└── docs/               # Documentação
+└── templates/          # Templates para novos projetos
 ```
 
-## 🎮 Exemplos
+## 🎮 Tipos de Plugin
 
-### Comando Simples
+### BasePlugin
+Plugin básico com comandos e hooks.
+
+### GamePlugin
+Para jogos que precisam de controle de teclado/mouse.
 
 ```python
-@command("!pontos")
-async def pontos(self, ctx):
-    user_points = await self.db.get_points(ctx.user_id)
-    await ctx.reply(f"Você tem {user_points} pontos!")
+class MeuJogo(GamePlugin):
+    def cmd_pular(self, username, args, **kwargs):
+        self.press_key("SPACE")
+        return f"{username} pulou!"
 ```
 
-### Evento de Chat
+### IntegrationPlugin
+Para integrações externas (OBS, Discord, etc).
 
-```python
-@event("on_message")
-async def on_msg(self, event):
-    if "gg" in event.message.lower():
-        await event.react("🎉")
-```
+### CommandPlugin
+Plugin simples focado em comandos com cooldown.
 
-### Jogo Interativo
+## 🔐 Permissões Disponíveis
 
-```python
-@command("!rolar")
-async def rolar_dado(self, ctx):
-    numero = random.randint(1, 6)
-    await ctx.reply(f"🎲 {ctx.user} rolou {numero}!")
-    
-    if numero == 6:
-        await self.db.add_points(ctx.user_id, 100)
-        await ctx.reply("Crítico! +100 pontos!")
-```
+| Permissão | Descrição |
+|-----------|-----------|
+| `core:log` | Registrar logs (padrão) |
+| `chat:send` | Enviar mensagens no chat |
+| `points:read` | Consultar pontos |
+| `points:write` | Adicionar/remover pontos |
+| `audio:tts` | Usar texto-para-fala |
+| `audio:play` | Tocar sons |
+| `macro:enqueue` | Executar teclas/macros |
+| `voting:manage` | Criar/encerrar votações |
 
 ## 📄 Licença
 
