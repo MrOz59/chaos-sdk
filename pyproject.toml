@@ -28,6 +28,7 @@ Repository = "https://github.com/mroz-dev/chaos-sdk"
 [project.scripts]
 chaos-sdk = "chaos_sdk.cli:main"
 chaos-plugin = "chaos_sdk.cli:main"
+chaos-dev = "chaos_sdk.testing.dev_cli:main"
 
 [project.optional-dependencies]
 dev = [

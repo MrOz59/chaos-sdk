@@ -50,6 +50,9 @@ from chaos_sdk.core.plugin import (
     PluginSecurityError,
 )
 
+# Alias para retrocompatibilidade
+ChaosPlugin = Plugin
+
 # Core - Comandos e Eventos
 from chaos_sdk.core.command import Command, command as cmd_decorator
 from chaos_sdk.core.events import Event, Events, on_event, hook as event_hook
@@ -126,6 +129,7 @@ __all__ = [
     
     # Core - Plugin Classes
     "Plugin",
+    "ChaosPlugin",  # Alias
     "BasePlugin",
     "GamePlugin",
     "IntegrationPlugin",
